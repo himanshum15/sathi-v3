@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>साथी — आपकी पहचान, आपकी तरक्की</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+  :root {
+    /* ---- Color: bold red + white, Airtel/Zomato-style. Named tokens kept the
+       same so the rest of the stylesheet needs no other edits. ---- */
+    --ink-teal:        #E31E27;   /* primary — brand red, action, verified */
+    --ink-teal-deep:   #B71119;   /* pressed / dark state */
+    --ink-teal-tint:   #FDEAEB;   /* pale red wash for selected/verified surfaces */
+    --marigold:        #F2A93B;   /* accent — achievement, stamps, ratings */
+    --marigold-deep:   #C9821C;
+    --marigold-tint:   #FCEED2;
+    --paper:           #FFFFFF;  /* app background — clean white */
+    --card:            #FFFFFF;  /* elevated surfaces */
+    --sand:            #F4F4F4;  /* recessed surfaces, inputs */
+    --ink:             #1A1A1A;  /* primary text — near-black */
+    --ink-soft:        #6B6B6B;  /* secondary text */
+    --ink-faint:       #A3A3A3;  /* placeholders, disabled */
+    --line:            #ECECEC;  /* hairline borders */
+    --success:         #2E7D4F;
+    --danger:          #D84315;
+
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --tap: 52px;
+
+    --font-display: 'Baloo 2', 'Noto Sans Devanagari', sans-serif;
+    --font-body: 'Noto Sans Devanagari', 'Noto Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EAEAEA; }
+
+  .phone-shell {
+    max-width: 390px; margin: 24px auto; height: 760px;
+    background: var(--paper); color: var(--ink);
+    border-radius: 36px; border: 10px solid #17201A; overflow: hidden;
+    position: relative; font-family: var(--font-body); font-size: 15px;
+    box-shadow: 0 20px 60px rgba(15,25,15,0.25);
+  }
+
+  .screen { display: none; height: 100%; flex-direction: column; overflow-y: auto; }
+  .screen.active { display: flex; }
+  .screen-pad { padding: 20px 20px 24px; }
+
+  ::-webkit-scrollbar { width: 0; }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    background: var(--ink-teal); color: #fff; border: none; border-radius: var(--radius-md);
+    min-height: var(--tap); font-family: var(--font-display); font-size: 16px; font-weight: 600;
+    letter-spacing: 0.2px; cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .12s ease, transform .08s ease;
+  }
+  .btn-primary:active { background: var(--ink-teal-deep); transform: scale(0.98); }
+  .btn-primary:disabled { background: var(--ink-faint); }
+
+  .btn-secondary {
+    background: transparent; color: var(--ink-teal); border: 1.5px solid var(--ink-teal);
+    border-radius: var(--radius-md); min-height: var(--tap); font-family: var(--font-display);
+    font-weight: 600; font-size: 15px; cursor: pointer; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-secondary:active { background: var(--ink-teal-tint); }
+
+  .btn-ghost-icon {
+    background: var(--sand); border: none; border-radius: var(--radius-sm);
+    width: var(--tap); height: var(--tap); display: flex; align-items: center; justify-content: center;
+    color: var(--ink); cursor: pointer; flex-shrink: 0;
+  }
+
+  /* ---------- Cards & surfaces ---------- */
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 16px; min-height: var(--tap);
+  }
+  .tile {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 16px 12px; cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: border-color .12s ease, transform .08s ease;
+  }
+  .tile:active { transform: scale(0.97); border-color: var(--ink-teal); }
+  .tile-icon {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--ink-teal-tint);
+    color: var(--ink-teal); display: flex; align-items: center; justify-content: center;
+  }
+  .tile-label { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--ink); }
+
+  /* ---------- Inputs ---------- */
+  .field-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 4px; display: block; }
+  .input-field {
+    background: var(--sand); border: 1.5px solid transparent; border-radius: var(--radius-md);
+    padding: 15px 16px; font-size: 16px; min-height: var(--tap); width: 100%;
+    color: var(--ink); font-family: var(--font-body);
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .input-field::placeholder { color: var(--ink-faint); }
+  .input-field:focus {
+    outline: none; border-color: var(--ink-teal); background: #fff;
+    box-shadow: 0 0 0 3px rgba(11,110,100,0.12);
+  }
+  .input-field.invalid { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(194,75,63,0.10); }
+
+  /* Custom select caret lives on a wrapper overlay, never on the <select> itself —
+     putting a background-image directly on a <select> makes some browsers (Firefox)
+     repeat that image on every option row in the open dropdown list. */
+  .select-wrap { position: relative; }
+  .select-wrap select.input-field {
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    padding-right: 42px; cursor: pointer;
+  }
+  .select-wrap::after {
+    content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23616B5C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat; background-position: center; background-size: 18px 18px;
+  }
+  .select-wrap:focus-within::after {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%230B6E64' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+  }
+
+  .screen-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.1px; color: var(--ink); }
+  .screen-subtitle { font-size: 14.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+  .section-label {
+    font-size: 12.5px; font-weight: 700; color: var(--ink-teal); text-transform: uppercase;
+    letter-spacing: 0.6px; margin: 22px 0 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .field-group, .form-section { display: flex; flex-direction: column; gap: 14px; }
+
+  /* Sticky footer: keeps the primary CTA anchored to the bottom of the screen
+     (easy thumb reach) while the fields above scroll independently. */
+  .screen-footer { padding: 14px 20px 20px; border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0; }
+
+  .error-text {
+    color: var(--danger); font-size: 13.5px; display: none; margin-top: 8px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+
+  .back-arrow {
+    background: var(--sand); border: none; border-radius: var(--radius-sm); cursor: pointer; color: var(--ink);
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* ---------- Onboarding top bar / stepper ---------- */
+  .onboard-top {
+    display: flex; align-items: center; gap: 12px; padding: 18px 20px 0;
+  }
+  .stepper-track { flex: 1; height: 6px; background: var(--sand); border-radius: 4px; overflow: hidden; }
+  .stepper-fill { height: 100%; background: var(--marigold); border-radius: 4px; transition: width .3s ease; }
+  .stepper-label { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
+
+  /* ---------- Chips ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px; background: var(--sand); color: var(--ink-soft);
+  }
+  .chip.verified { background: var(--ink-teal-tint); color: var(--ink-teal); }
+  .chip.pending { background: var(--marigold-tint); color: var(--marigold-deep); }
+
+  /* ---------- Passbook (signature element) ---------- */
+  .passbook {
+    position: relative; border-radius: var(--radius-lg); padding: 18px;
+    background: linear-gradient(135deg, var(--ink-teal) 0%, #FF5A54 100%);
+    color: #fff; overflow: hidden;
+  }
+  .passbook::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.12) 1.5px, transparent 1.5px);
+    background-size: 14px 14px; opacity: .5;
+  }
+  .passbook::after {
+    content: ""; position: absolute; left: -10px; top: 0; bottom: 0; width: 20px;
+    background-image: radial-gradient(circle, var(--paper) 4px, transparent 4.5px);
+    background-size: 20px 20px; background-position: center;
+  }
+  .passbook-inner { position: relative; z-index: 1; }
+  .passbook-row { display: flex; align-items: center; gap: 12px; }
+  .passbook-avatar {
+    width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.5);
+  }
+  .passbook-name { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+  .passbook-role { font-size: 13px; opacity: 0.85; margin-top: 1px; }
+  .passbook-stamps { display: flex; gap: 8px; margin-top: 16px; }
+  .stamp {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 2px dashed rgba(255,255,255,0.45); color: rgba(255,255,255,0.55);
+  }
+  .stamp.done { border-style: solid; border-color: var(--marigold); background: rgba(242,169,59,0.22); color: var(--marigold); }
+  .passbook-progress { margin-top: 14px; }
+  .passbook-progress-track { height: 8px; background: rgba(255,255,255,0.22); border-radius: 4px; overflow: hidden; }
+  .passbook-progress-fill { height: 100%; background: var(--marigold); border-radius: 4px; transition: width .4s ease; }
+  .passbook-progress-label { font-size: 12.5px; margin-top: 6px; opacity: 0.9; font-weight: 600; }
+
+  /* ---------- Carousel ---------- */
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: background .2s, width .2s; }
+  .dot.active { background: var(--marigold); width: 20px; border-radius: 4px; }
+
+  /* ---------- Skill / occupation selectable cards ---------- */
+  .skill-card, .secondary-skill-card {
+    background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius-lg);
+    padding: 16px 8px; text-align: center; cursor: pointer; font-size: 13.5px; font-weight: 600;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--ink);
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .skill-card.selected, .secondary-skill-card.selected {
+    border-color: var(--ink-teal); background: var(--ink-teal-tint); color: var(--ink-teal-deep);
+  }
+  .skill-card .tile-icon, .secondary-skill-card .tile-icon { background: var(--sand); color: var(--ink-soft); }
+  .skill-card.selected .tile-icon, .secondary-skill-card.selected .tile-icon { background: var(--ink-teal); color: #fff; }
+
+  /* ---------- List rows (jobs / schemes) ---------- */
+  .list-row {
+    display: flex; gap: 12px; align-items: flex-start; background: var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 14px; margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .list-row:active { border-color: var(--ink-teal); }
+  .list-row-icon {
+    width: 46px; height: 46px; border-radius: 12px; background: var(--marigold-tint); color: var(--marigold-deep);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .list-row-title { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; color: var(--ink); }
+  .list-row-meta { color: var(--ink-soft); font-size: 13px; margin-top: 3px; }
+  .list-row-chips { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    text-align: center; padding: 32px 16px; color: var(--ink-soft);
+    border: 1.5px dashed var(--line); border-radius: var(--radius-lg); background: var(--card);
+  }
+  .empty-state .tile-icon { margin: 0 auto 10px; }
+  .empty-state-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--ink); }
+  .empty-state-sub { font-size: 13px; margin-top: 4px; line-height: 1.5; }
+
+  /* ---------- Status card (police verification) ---------- */
+  .status-card { text-align: center; padding: 28px 20px; }
+  .status-icon-wrap {
+    width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center; background: var(--sand); color: var(--ink-soft);
+  }
+  .status-icon-wrap.processing { background: var(--marigold-tint); color: var(--marigold-deep); }
+  .status-icon-wrap.done { background: var(--ink-teal-tint); color: var(--ink-teal); }
+
+  /* ---------- Bottom sheet ---------- */
+  #bottom-sheet {
+    display: none; position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--paper); border-radius: 22px 22px 0 0; padding: 22px 20px 26px; z-index: 999;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+  }
+  #bottom-sheet-overlay { display: none; position: absolute; inset: 0; background: rgba(20,25,20,0.45); z-index: 998; border-radius: 26px; }
+  .sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 14px; }
+  .sheet-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-bottom: 14px; }
+
+  /* ---------- Bottom tab bar ---------- */
+  #bottom-tab-bar {
+    display: none; position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid var(--line); padding: 6px 8px 8px; z-index: 500;
+  }
+  .tab-btn {
+    flex: 1; text-align: center; padding: 6px 0; cursor: pointer; min-height: var(--tap);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    color: var(--ink-faint); border-radius: 12px; transition: background .12s;
+  }
+  .tab-btn.tab-active { color: var(--ink-teal); background: var(--ink-teal-tint); }
+  .tab-btn span { font-size: 11.5px; font-weight: 600; font-family: var(--font-body); }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    display: none; position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 12px 18px; border-radius: var(--radius-md); z-index: 999;
+    font-size: 14px; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    max-width: 300px;
+  }
+
+  /* ---------- Home header ---------- */
+  .home-header { display: flex; align-items: center; justify-content: space-between; }
+  .home-greeting { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+  .home-greeting-sub { font-size: 13px; color: var(--ink-soft); margin-top: 1px; }
+  .bell-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--sand); display: flex;
+    align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0;
+  }
+
+  .scheme-banner {
+    margin-top: 18px; background: var(--marigold-tint); border: 1px solid #EBCE8E; border-radius: var(--radius-lg);
+    padding: 14px; cursor: pointer; display: flex; gap: 12px; align-items: center;
+  }
+  .scheme-banner-icon {
+    width: 42px; height: 42px; border-radius: 10px; background: var(--marigold); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* ---------- Responsive: real phone viewport ---------- */
+  /* The 760px-tall bezel mockup is for desktop preview. On an actual phone,
+     make the app fill the real viewport edge-to-edge so bottom sheets, the
+     tab bar, and toasts land exactly at the real screen edges. */
+  @media (max-width: 480px) {
+    body { background: var(--paper); }
+    .phone-shell {
+      margin: 0; max-width: 100%; width: 100%;
+      height: 100vh; height: 100dvh;
+      border: none; border-radius: 0; box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-shell" id="phone-shell">
+
+  <!-- SPLASH -->
+  <div class="screen active" id="screen-splash">
+    <div style="margin:auto;text-align:center;">
+      <div style="width:76px;height:76px;border-radius:22px;background:var(--ink-teal);display:flex;align-items:center;justify-content:center;margin:0 auto;color:#fff;">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/><circle cx="8.5" cy="12" r="2"/><path d="M8.5 16.5c0-1.4 1.1-2.5 2.5-2.5"/><path d="M14 10h4M14 14h4"/></svg>
+      </div>
+      <div style="font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--ink-teal);margin-top:16px;">साथी</div>
+      <div style="color:var(--ink-soft);margin-top:6px;">आपकी पहचान, आपकी तरक्की</div>
+    </div>
+  </div>
+
+  <!-- CAROUSEL -->
+  <div class="screen" id="screen-carousel">
+    <div class="screen-pad" style="flex:1; display:flex; flex-direction:column;">
+      <div style="flex:1; position:relative;">
+        <div class="carousel-slide" data-slide="0" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; opacity:1; transition:opacity .25s;">
+          <div style="width:88px;height:88px;border-radius:24px;background:var(--ink-teal-tint);display:flex;align-items:center;justify-content:center;color:var(--ink-teal);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/><circle cx="8.5" cy="12" r="2"/><path d="M8.5 16.5c0-1.4 1.1-2.5 2.5-2.5"/><path d="M14 10h4M14 14h4"/></svg>
+          </div>
+          <div class="screen-title" style="margin-top:20px;">आपकी डिजिटल पहचान</div>
+          <div class="screen-subtitle">सभी दस्तावेज़ एक जगह, सुरक्षित और आपके नियंत्रण में</div>
+        </div>
+        <div class="carousel-slide" data-slide="1" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; opacity:0; transition:opacity .25s;">
+          <div style="width:88px;height:88px;border-radius:24px;background:var(--marigold-tint);display:flex;align-items:center;justify-content:center;color:var(--marigold-deep);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h6"/></svg>
+          </div>
+          <div class="screen-title" style="margin-top:20px;">सरकारी योजनाओं का लाभ</div>
+          <div class="screen-subtitle">आपके लिए सही योजना हम खोज कर देंगे</div>
+        </div>
+        <div class="carousel-slide" data-slide="2" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; opacity:0; transition:opacity .25s;">
+          <div style="width:88px;height:88px;border-radius:24px;background:var(--ink-teal-tint);display:flex;align-items:center;justify-content:center;color:var(--ink-teal);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </div>
+          <div class="screen-title" style="margin-top:20px;">बेहतर काम, बेहतर आय</div>
+          <div class="screen-subtitle">अपने आस-पास भरोसेमंद नौकरियां खोजें</div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:center; gap:8px; margin:18px 0;">
+        <div class="dot active" data-dot="0"></div>
+        <div class="dot" data-dot="1"></div>
+        <div class="dot" data-dot="2"></div>
+      </div>
+      <button class="btn-primary" id="carousel-btn" onclick="carouselNext()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <!-- MOBILE / OTP -->
+  <div class="screen" id="screen-mobile-otp">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" id="stepper-fill" style="width:16.6%;"></div></div>
+      <div class="stepper-label" id="stepper-label">चरण 1/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;">
+      <div class="screen-title" style="margin-top:8px;">मोबाइल नंबर दर्ज करें</div>
+      <div class="screen-subtitle">हम आपको सत्यापन के लिए एक OTP भेजेंगे</div>
+      <div class="field-group" style="margin-top:28px;">
+        <span class="field-label">मोबाइल नंबर</span>
+        <input id="input-mobile" class="input-field" type="tel" maxlength="10" placeholder="9876543210" inputmode="numeric" />
+        <div id="mobile-error" class="error-text">⚠ कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें</div>
+      </div>
+      <div id="otp-section" style="display:none; margin-top:18px;">
+        <div class="field-group">
+          <span class="field-label" id="otp-sent-to"></span>
+          <input id="input-otp" class="input-field" type="tel" maxlength="4" placeholder="0000" inputmode="numeric" style="letter-spacing:6px; font-size:18px; text-align:center;" />
+          <div id="otp-error" class="error-text">⚠ गलत OTP, कृपया फिर से कोशिश करें</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-footer">
+      <button class="btn-primary" id="mobile-otp-btn" onclick="submitMobile()">OTP भेजें</button>
+    </div>
+  </div>
+
+  <!-- PERSONAL FORM — STEP A: BASIC INFO (max 4 fields: photo, name, gender, dob) -->
+  <div class="screen" id="screen-personal-basic">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" style="width:33.3%;"></div></div>
+      <div class="stepper-label">चरण 2/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <div class="screen-title">मूल जानकारी</div>
+      <div class="screen-subtitle">यह जानकारी आपकी पहचान पासबुक बनाएगी</div>
+
+      <div class="form-section" style="margin-top:20px;">
+        <div class="card" style="text-align:center; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--ink-teal); font-weight:600;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7l1.6-2.5h4.8L16 7"/><circle cx="12" cy="13.5" r="3.5"/></svg> फोटो जोड़ें
+        </div>
+        <input id="p-name" class="input-field" placeholder="पूरा नाम" />
+        <div class="select-wrap">
+          <select id="p-gender" class="input-field">
+            <option value="">लिंग चुनें</option><option value="male">पुरुष</option><option value="female">महिला</option><option value="other">अन्य</option>
+          </select>
+        </div>
+        <input id="p-dob" class="input-field" type="date" />
+      </div>
+
+      <div id="p-basic-error" class="error-text">⚠ कृपया नाम, लिंग व जन्मतिथि भरें</div>
+    </div>
+    <div class="screen-footer">
+      <button class="btn-primary" onclick="saveBasicAndContinue()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <!-- PERSONAL FORM — STEP B: IDENTITY & DOCUMENTS (max 4 fields: aadhaar, pan, marital, disability) -->
+  <div class="screen" id="screen-personal-identity">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" style="width:50%;"></div></div>
+      <div class="stepper-label">चरण 3/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <div class="screen-title">पहचान एवं दस्तावेज़</div>
+      <div class="screen-subtitle">यह विवरण नियोक्ताओं के भरोसे के लिए ज़रूरी है</div>
+
+      <div class="form-section" style="margin-top:20px;">
+        <div style="display:flex; gap:8px;">
+          <input id="p-aadhaar" class="input-field" maxlength="12" placeholder="आधार नंबर (12 अंक)" style="flex:1;" inputmode="numeric" />
+          <button id="btn-doc-aadhaar" class="btn-secondary" style="width:auto; padding:0 16px;" onclick="mockUploadDoc('aadhaar')">अपलोड</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input id="p-pan" class="input-field" maxlength="10" placeholder="पैन नंबर (वैकल्पिक)" style="flex:1;" />
+          <button id="btn-doc-pan" class="btn-secondary" style="width:auto; padding:0 16px;" onclick="mockUploadDoc('pan')">अपलोड</button>
+        </div>
+        <div class="select-wrap">
+          <select id="p-marital" class="input-field">
+            <option value="">वैवाहिक स्थिति</option><option value="single">अविवाहित</option><option value="married">विवाहित</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="p-disability" class="input-field">
+            <option value="no">कोई दिव्यांगता नहीं</option><option value="yes">दिव्यांगता है</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="p-identity-error" class="error-text">⚠ कृपया सही 12-अंकीय आधार नंबर दर्ज करें</div>
+    </div>
+    <div class="screen-footer">
+      <button class="btn-primary" onclick="saveIdentityAndContinue()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <!-- PERSONAL FORM — STEP C: ADDRESS & FAMILY (max 4 fields) -->
+  <div class="screen" id="screen-personal-address">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" style="width:66.6%;"></div></div>
+      <div class="stepper-label">चरण 4/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <div class="screen-title">पता एवं परिवार</div>
+      <div class="screen-subtitle">इससे हम आपके नज़दीक सही अवसर खोज पाएंगे</div>
+
+      <div class="form-section" style="margin-top:20px;">
+        <input id="p-address-permanent" class="input-field" placeholder="स्थायी पता" />
+        <input id="p-address-current" class="input-field" placeholder="वर्तमान पता" />
+        <input id="p-village" class="input-field" placeholder="गृह गांव" />
+        <input id="p-dependents" class="input-field" type="number" placeholder="आश्रितों की संख्या" />
+      </div>
+
+      <div id="p-address-error" class="error-text">⚠ कृपया स्थायी पता व वर्तमान पता भरें</div>
+    </div>
+    <div class="screen-footer">
+      <button class="btn-primary" onclick="saveAddressAndContinue()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <!-- POLICE VERIFICATION -->
+  <div class="screen" id="screen-police-verification">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" style="width:83.3%;"></div></div>
+      <div class="stepper-label">चरण 5/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <div class="screen-title">पुलिस सत्यापन</div>
+      <div class="screen-subtitle">नियोक्ताओं के भरोसे के लिए एक बार का सत्यापन ज़रूरी है</div>
+      <div class="card status-card" style="margin-top:20px;">
+        <div class="status-icon-wrap" id="police-status-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6z"/></svg>
+        </div>
+        <div id="police-status-text" style="margin-top:4px;font-family:var(--font-display);font-weight:600;font-size:15.5px;">प्रक्रिया शुरू करने के लिए सहमति दें</div>
+        <div style="color:var(--ink-soft);font-size:13px;margin-top:6px;">आपकी जानकारी सुरक्षित रहती है और केवल सत्यापन के लिए उपयोग होती है</div>
+      </div>
+    </div>
+    <div class="screen-footer">
+      <button id="btn-start-verification" class="btn-primary" onclick="startPoliceVerification()">सहमति दें और शुरू करें</button>
+    </div>
+  </div>
+
+  <!-- SKILL FORM -->
+  <div class="screen" id="screen-skill-form">
+    <div class="onboard-top">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stepper-track"><div class="stepper-fill" style="width:100%;"></div></div>
+      <div class="stepper-label">चरण 6/6</div>
+    </div>
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <div class="screen-title">कौशल प्रोफ़ाइल</div>
+      <div class="screen-subtitle">इससे हम आपके लिए सही काम खोज पाएंगे</div>
+
+      <div class="section-label">आपका मुख्य काम</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="skill-card" data-value="maid" onclick="selectOccupation(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg></div>
+          घरेलू सहायिका
+        </div>
+        <div class="skill-card" data-value="guard" onclick="selectOccupation(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6z"/></svg></div>
+          सुरक्षा गार्ड
+        </div>
+        <div class="skill-card" data-value="electrician" onclick="selectOccupation(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 2z"/></svg></div>
+          इलेक्ट्रीशियन
+        </div>
+        <div class="skill-card" data-value="driver" onclick="selectOccupation(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16V11l2-5h12l2 5v5"/><path d="M2 16h20"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/></svg></div>
+          ड्राइवर
+        </div>
+      </div>
+
+      <div class="section-label">अनुभव एवं उपलब्धता</div>
+      <div class="form-section">
+        <div class="select-wrap">
+          <select id="skill-experience" class="input-field">
+            <option value="">अनुभव चुनें</option>
+            <option value="0-1">0–1 वर्ष</option><option value="1-3">1–3 वर्ष</option><option value="3-5">3–5 वर्ष</option><option value="5+">5+ वर्ष</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="skill-availability" class="input-field">
+            <option value="">उपलब्धता चुनें</option>
+            <option value="fulltime">पूर्णकालिक</option><option value="parttime">अंशकालिक</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">अतिरिक्त कौशल (वैकल्पिक)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="secondary-skill-card" data-value="cooking" onclick="toggleSecondarySkill(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M5 14a7 7 0 0 1 14 0"/><path d="M9 7c0-2 1-3 1-3M14 7c0-2 1-3 1-3"/></svg></div>
+          खाना बनाना
+        </div>
+        <div class="secondary-skill-card" data-value="cleaning" onclick="toggleSecondarySkill(this)">
+          <div class="tile-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg></div>
+          सफाई
+        </div>
+      </div>
+
+      <div id="skill-error" class="error-text">⚠ कृपया अपना मुख्य काम चुनें</div>
+    </div>
+    <div class="screen-footer">
+      <button class="btn-primary" onclick="saveSkillAndContinue()">पासबुक पूरी करें</button>
+    </div>
+  </div>
+
+  <!-- REGISTRATION SUCCESS -->
+  <div class="screen" id="screen-registration-success">
+    <div class="screen-pad" style="flex:1;display:flex;flex-direction:column;">
+      <div style="margin:auto;text-align:center;">
+        <div style="width:76px;height:76px;border-radius:50%;background:var(--ink-teal-tint);display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--ink-teal);">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+        </div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-top:18px;">पंजीकरण सफल!</div>
+        <div style="color:var(--ink-soft);margin-top:8px;">आपकी पहचान पासबुक तैयार है — अब साथी परिवार का हिस्सा हैं</div>
+      </div>
+      <button class="btn-primary" onclick="state.profileCompletion=70; showScreen('screen-home')">पासबुक देखें</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen" id="screen-home">
+    <div class="screen-pad" style="flex:1;overflow-y:auto;padding-bottom:90px;">
+      <div class="home-header">
+        <div>
+          <div class="home-greeting">नमस्ते 🙏</div>
+          <div class="home-greeting-sub" id="home-name-line">अपनी प्रगति देखें</div>
+        </div>
+        <div class="bell-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
+      </div>
+
+      <div id="home-passbook" style="margin-top:16px;"></div>
+
+      <div class="section-label" style="margin-top:22px;">आपके टूल</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="tile" onclick="showScreen('screen-document-locker')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+          <div class="tile-label">दस्तावेज़ लॉकर</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-income-tracker')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/></svg></div>
+          <div class="tile-label">आय ट्रैकर</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-work-history')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9a3 3 0 0 1 3 3v15l-3-2-3 2-3-2-3 2V6a3 3 0 0 1 3-3z"/><path d="M9 9h6M9 13h6"/></svg></div>
+          <div class="tile-label">कार्य इतिहास</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-skills-passport')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M9 13.5L7 21l5-3 5 3-2-7.5"/></svg></div>
+          <div class="tile-label">कौशल पासपोर्ट</div>
+        </div>
+      </div>
+
+      <div class="scheme-banner" onclick="showScreen('screen-schemes-list')">
+        <div class="scheme-banner-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 9h16M12 9v11"/></svg></div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">आप <b>आयुष्मान भारत</b> के लिए पात्र हैं</div>
+          <div style="font-size:12.5px;color:var(--marigold-deep);margin-top:2px;">अभी देखें और आवेदन करें →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMES LIST -->
+  <div class="screen" id="screen-schemes-list">
+    <div class="screen-pad" style="padding-bottom:90px;flex:1;overflow-y:auto;">
+      <div class="screen-title">सरकारी योजनाएं</div>
+      <div class="screen-subtitle">आपकी प्रोफ़ाइल के अनुसार चुनी गई</div>
+      <div id="schemes-list-container" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- SCHEME DETAIL -->
+  <div class="screen" id="screen-scheme-detail">
+    <div class="screen-pad" style="flex:1;display:flex;flex-direction:column;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div id="scheme-detail-content" style="margin-top:14px;"></div>
+      <button class="btn-primary" style="margin-top:auto;" onclick="showScreen('screen-scheme-enrollment')">आवेदन शुरू करें</button>
+    </div>
+  </div>
+
+  <!-- SCHEME ENROLLMENT -->
+  <div class="screen" id="screen-scheme-enrollment">
+    <div class="screen-pad" style="padding-bottom:90px;flex:1;overflow-y:auto;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="screen-title" style="margin-top:14px;">आवेदन सहायक</div>
+      <div class="card" style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;color:var(--ink-teal);font-weight:600;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg> पात्रता जांची गई
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:var(--ink-teal);font-weight:600;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/></svg> दस्तावेज़ जमा — आधार, फोटो
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:var(--ink-teal);font-weight:600;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 20h16"/></svg> आवेदन जमा किया गया
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;color:var(--marigold-deep);font-weight:700;background:var(--marigold-tint);padding:10px 12px;border-radius:var(--radius-md);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v5h5"/><path d="M20 20v-5h-5"/><path d="M5 9a8 8 0 0 1 14-3"/><path d="M19 15a8 8 0 0 1-14 3"/></svg> स्थिति: समीक्षा में
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOBS LIST -->
+  <div class="screen" id="screen-jobs-list">
+    <div class="screen-pad" style="padding-bottom:90px;flex:1;overflow-y:auto;">
+      <div class="screen-title">आपके आस-पास नौकरियां</div>
+      <div class="screen-subtitle">आपके कौशल के अनुसार चुनी गई</div>
+      <div id="jobs-list-container" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- JOB DETAIL -->
+  <div class="screen" id="screen-job-detail">
+    <div class="screen-pad" style="flex:1;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div id="job-detail-content" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="screen-pad" style="padding-bottom:90px;flex:1;overflow-y:auto;">
+      <div class="screen-title">प्रोफ़ाइल</div>
+      <div id="profile-passbook" style="margin-top:14px;"></div>
+      <div class="section-label" style="margin-top:22px;">आपके टूल</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="tile" onclick="showScreen('screen-document-locker')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+          <div class="tile-label">दस्तावेज़ लॉकर</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-work-history')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9a3 3 0 0 1 3 3v15l-3-2-3 2-3-2-3 2V6a3 3 0 0 1 3-3z"/><path d="M9 9h6M9 13h6"/></svg></div>
+          <div class="tile-label">कार्य इतिहास</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-skills-passport')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M9 13.5L7 21l5-3 5 3-2-7.5"/></svg></div>
+          <div class="tile-label">कौशल पासपोर्ट</div>
+        </div>
+        <div class="tile" onclick="showScreen('screen-income-tracker')">
+          <div class="tile-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"/><path d="M16 12h3"/></svg></div>
+          <div class="tile-label">आय ट्रैकर</div>
+        </div>
+        <div class="tile" style="grid-column:span 2;" onclick="showScreen('screen-police-certificate')">
+          <div class="tile-icon" style="background:var(--ink-teal-tint);color:var(--ink-teal);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></div>
+          <div class="tile-label">पुलिस सत्यापन प्रमाणपत्र</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCUMENT LOCKER -->
+  <div class="screen" id="screen-document-locker">
+    <div class="screen-pad" style="flex:1;overflow-y:auto;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="screen-title" style="margin-top:14px;">दस्तावेज़ लॉकर</div>
+      <div class="screen-subtitle">सभी दस्तावेज़ सुरक्षित रूप से यहां रखे जाते हैं</div>
+      <div id="doc-locker-list" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- WORK HISTORY -->
+  <div class="screen" id="screen-work-history">
+    <div class="screen-pad" style="flex:1;display:flex;flex-direction:column;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="screen-title" style="margin-top:14px;">कार्य इतिहास</div>
+      <div id="work-history-list" style="margin-top:16px;overflow-y:auto;flex:1;"></div>
+      <button class="btn-primary" onclick="openAddWorkHistorySheet()">+ अनुभव जोड़ें</button>
+    </div>
+  </div>
+
+  <!-- SKILLS PASSPORT -->
+  <div class="screen" id="screen-skills-passport">
+    <div class="screen-pad" style="flex:1;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="screen-title" style="margin-top:14px;">कौशल पासपोर्ट</div>
+      <div id="skills-passport-content" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- INCOME TRACKER -->
+  <div class="screen" id="screen-income-tracker">
+    <div class="screen-pad" style="flex:1;display:flex;flex-direction:column;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="screen-title" style="margin-top:14px;">आय ट्रैकर</div>
+      <div id="income-total" class="card" style="margin-top:16px;text-align:center;font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--ink-teal);"></div>
+      <div id="income-list" style="margin-top:12px;overflow-y:auto;flex:1;"></div>
+      <button class="btn-primary" onclick="openAddIncomeSheet()">+ आय जोड़ें</button>
+    </div>
+  </div>
+
+  <!-- POLICE CERTIFICATE -->
+  <div class="screen" id="screen-police-certificate">
+    <div class="screen-pad" style="flex:1;display:flex;flex-direction:column;">
+      <button class="back-arrow" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div style="margin:auto;text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--ink-teal-tint);display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--ink-teal);">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+        </div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-top:14px;">पुलिस सत्यापन प्रमाणपत्र</div>
+        <div class="chip verified" style="margin-top:8px;">स्थिति: सत्यापित</div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn-primary" onclick="showToast('डाउनलोड हो रहा है...')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg> डाउनलोड
+        </button>
+        <button class="btn-secondary" onclick="showToast('शेयर लिंक कॉपी हुआ')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M8.1 10.8l7.8-3.6M8.1 13.2l7.8 3.6"/></svg> शेयर करें
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bottom-sheet-overlay" onclick="closeBottomSheet()"></div>
+  <div id="bottom-sheet"></div>
+
+  <div id="bottom-tab-bar">
+    <div style="display:flex;gap:4px;">
+      <div class="tab-btn" data-tab="home" onclick="setActiveTab('home')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11L12 4l8 7"/><path d="M6 10v9h5v-5h2v5h5v-9"/></svg>
+        <span>होम</span>
+      </div>
+      <div class="tab-btn" data-tab="schemes" onclick="setActiveTab('schemes')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h6"/></svg>
+        <span>योजनाएं</span>
+      </div>
+      <div class="tab-btn" data-tab="jobs" onclick="setActiveTab('jobs')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>नौकरी</span>
+      </div>
+      <div class="tab-btn" data-tab="profile" onclick="setActiveTab('profile')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+        <span>प्रोफाइल</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+  const state = {
+    screenHistory: [],
+    mobile: '', otp: '',
+    personal: { name: '', gender: '', dob: '', photo: null, aadhaar: '', pan: '', maritalStatus: '', disability: '', addressPermanent: '', addressCurrent: '', nativeVillage: '', dependents: '' },
+    skill: { occupation: '', occupationLabel: '', secondarySkills: [], experience: '', availability: '' },
+    policeVerification: { status: 'pending' },
+    profileCompletion: 10,
+    incomeEntries: [],
+    workHistory: [],
+  };
+
+  const OCCUPATION_LABELS = { maid: 'घरेलू सहायिका', guard: 'सुरक्षा गार्ड', electrician: 'इलेक्ट्रीशियन', driver: 'ड्राइवर' };
+
+  function svgIcon(inner, size, color) {
+    size = size || 20;
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') +
+      '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + inner + '</svg>';
+  }
+  const I = {
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+    star: '<path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.3 9.2l6.1-.6z"/>',
+    idcard: '<path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/><circle cx="8.5" cy="12" r="2"/><path d="M8.5 16.5c0-1.4 1.1-2.5 2.5-2.5"/><path d="M14 10h4M14 14h4"/>',
+    shield: '<path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6z"/>',
+    hospital: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>',
+    worker: '<path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20"/><path d="M12 7v4"/>',
+    briefcase: '<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    map: '<path d="M9 20l-6-2V4l6 2 6-2 6 2v14l-6-2-6 2z"/><path d="M9 6v14M15 4v14"/>',
+    inbox: '<path d="M3 12h4l2 3h6l2-3h4"/><path d="M5 5h14l2 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7z"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    empty: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  };
+
+  const TAB_SCREENS = { home: 'screen-home', schemes: 'screen-schemes-list', jobs: 'screen-jobs-list', profile: 'screen-profile' };
+
+  function setActiveTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+    document.querySelector('.tab-btn[data-tab="' + tabName + '"]').classList.add('tab-active');
+    if (tabName === 'schemes') renderSchemesList();
+    if (tabName === 'jobs') renderJobsList();
+    if (tabName === 'profile') renderProfile();
+    showScreen(TAB_SCREENS[tabName]);
+  }
+
+  function showScreen(id) {
+    const current = document.querySelector('.screen.active');
+    if (current) current.classList.remove('active');
+    const next = document.getElementById(id);
+    if (!next) { console.error('Unknown screen id', id); return; }
+    next.classList.add('active');
+    next.scrollTop = 0;
+    if (state.screenHistory[state.screenHistory.length - 1] !== id) state.screenHistory.push(id);
+
+    const tabBar = document.getElementById('bottom-tab-bar');
+    const isTabScreen = Object.values(TAB_SCREENS).includes(id);
+    tabBar.style.display = isTabScreen ? 'block' : 'none';
+
+    if (id === 'screen-home') renderHome();
+    if (id === 'screen-profile') renderProfile();
+    if (id === 'screen-document-locker') renderDocumentLocker();
+    if (id === 'screen-work-history') renderWorkHistory();
+    if (id === 'screen-skills-passport') renderSkillsPassport();
+    if (id === 'screen-income-tracker') renderIncomeTracker();
+  }
+
+  function goBack() {
+    state.screenHistory.pop();
+    const prev = state.screenHistory[state.screenHistory.length - 1];
+    if (prev) showScreen(prev);
+  }
+
+  let carouselIndex = 0;
+  function carouselNext() {
+    if (carouselIndex < 2) {
+      document.querySelector('.carousel-slide[data-slide="' + carouselIndex + '"]').style.opacity = '0';
+      document.querySelector('.dot[data-dot="' + carouselIndex + '"]').classList.remove('active');
+      carouselIndex++;
+      document.querySelector('.carousel-slide[data-slide="' + carouselIndex + '"]').style.opacity = '1';
+      document.querySelector('.dot[data-dot="' + carouselIndex + '"]').classList.add('active');
+      document.getElementById('carousel-btn').textContent = carouselIndex === 2 ? 'शुरू करें' : 'आगे बढ़ें';
+    } else {
+      showScreen('screen-mobile-otp');
+    }
+  }
+
+  function submitMobile() {
+    const btn = document.getElementById('mobile-otp-btn');
+    if (btn.dataset.stage !== 'otp') {
+      const input = document.getElementById('input-mobile');
+      const val = input.value.trim();
+      const errorEl = document.getElementById('mobile-error');
+      if (!/^\d{10}$/.test(val)) { errorEl.style.display = 'flex'; input.classList.add('invalid'); return; }
+      errorEl.style.display = 'none'; input.classList.remove('invalid');
+      state.mobile = val;
+      document.getElementById('otp-sent-to').textContent = '+91 ' + val + ' पर भेजा गया';
+      document.getElementById('otp-section').style.display = 'block';
+      btn.textContent = 'सत्यापित करें';
+      btn.dataset.stage = 'otp';
+      document.getElementById('input-otp').focus();
+    } else {
+      validateOtp();
+    }
+  }
+
+  function validateOtp() {
+    const input = document.getElementById('input-otp');
+    const val = input.value.trim();
+    const errorEl = document.getElementById('otp-error');
+    if (!/^\d{4}$/.test(val)) { errorEl.style.display = 'flex'; input.classList.add('invalid'); return; }
+    errorEl.style.display = 'none'; input.classList.remove('invalid');
+    state.otp = val;
+    const btn = document.getElementById('mobile-otp-btn');
+    btn.textContent = 'सत्यापित हो रहा है...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = 'सत्यापित करें';
+      btn.disabled = false;
+      showScreen('screen-personal-basic');
+    }, 800);
+  }
+
+  /* ---- Step A: basic info ---- */
+  function saveBasicAndContinue() {
+    const name = document.getElementById('p-name').value.trim();
+    const gender = document.getElementById('p-gender').value;
+    const dob = document.getElementById('p-dob').value;
+    const errorEl = document.getElementById('p-basic-error');
+    if (!name || !gender || !dob) { errorEl.style.display = 'flex'; return; }
+    errorEl.style.display = 'none';
+    Object.assign(state.personal, { name, gender, dob });
+    state.profileCompletion = 25;
+    showScreen('screen-personal-identity');
+  }
+
+  /* ---- Step B: identity & documents ---- */
+  function saveIdentityAndContinue() {
+    const aadhaar = document.getElementById('p-aadhaar').value.trim();
+    const errorEl = document.getElementById('p-identity-error');
+    if (!/^\d{12}$/.test(aadhaar)) { errorEl.style.display = 'flex'; return; }
+    errorEl.style.display = 'none';
+    Object.assign(state.personal, {
+      aadhaar,
+      pan: document.getElementById('p-pan').value.trim(),
+      maritalStatus: document.getElementById('p-marital').value,
+      disability: document.getElementById('p-disability').value,
+    });
+    state.profileCompletion = 40;
+    showScreen('screen-personal-address');
+  }
+
+  /* ---- Step C: address & family ---- */
+  function saveAddressAndContinue() {
+    const addressPermanent = document.getElementById('p-address-permanent').value.trim();
+    const addressCurrent = document.getElementById('p-address-current').value.trim();
+    const errorEl = document.getElementById('p-address-error');
+    if (!addressPermanent || !addressCurrent) { errorEl.style.display = 'flex'; return; }
+    errorEl.style.display = 'none';
+    Object.assign(state.personal, {
+      addressPermanent, addressCurrent,
+      nativeVillage: document.getElementById('p-village').value.trim(),
+      dependents: document.getElementById('p-dependents').value.trim(),
+    });
+    state.profileCompletion = 55;
+    showScreen('screen-police-verification');
+  }
+
+  function mockUploadDoc(docType) {
+    const btn = document.getElementById('btn-doc-' + docType);
+    btn.innerHTML = svgIcon(I.check, 16) + ' अपलोड हुआ';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    state.personal[docType + 'DocUploaded'] = true;
+  }
+
+  function startPoliceVerification() {
+    const btn = document.getElementById('btn-start-verification');
+    const statusIconWrap = document.getElementById('police-status-icon');
+    const text = document.getElementById('police-status-text');
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    state.policeVerification.status = 'processing';
+    statusIconWrap.className = 'status-icon-wrap processing';
+    statusIconWrap.innerHTML = svgIcon('<path d="M4 4v5h5"/><path d="M20 20v-5h-5"/><path d="M5 9a8 8 0 0 1 14-3"/><path d="M19 15a8 8 0 0 1-14 3"/>', 34);
+    text.textContent = 'सत्यापन प्रक्रिया में है...';
+    setTimeout(() => {
+      state.policeVerification.status = 'verified';
+      statusIconWrap.className = 'status-icon-wrap done';
+      statusIconWrap.innerHTML = svgIcon(I.check, 34);
+      text.textContent = 'सत्यापित';
+      showToast('पुलिस सत्यापन सफल रहा');
+      setTimeout(() => showScreen('screen-skill-form'), 1000);
+    }, 1800);
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = svgIcon(I.check, 16, 'var(--marigold)') + '<span>' + message + '</span>';
+    toast.style.display = 'flex';
+    setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  }
+
+  function selectOccupation(el) {
+    document.querySelectorAll('.skill-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    state.skill.occupation = el.dataset.value;
+    state.skill.occupationLabel = OCCUPATION_LABELS[el.dataset.value] || el.dataset.value;
+  }
+
+  function saveSkillAndContinue() {
+    const errorEl = document.getElementById('skill-error');
+    if (!state.skill.occupation) { errorEl.style.display = 'flex'; return; }
+    errorEl.style.display = 'none';
+    state.skill.experience = document.getElementById('skill-experience').value;
+    state.skill.availability = document.getElementById('skill-availability').value;
+    showScreen('screen-registration-success');
+  }
+
+  function toggleSecondarySkill(el) {
+    const value = el.dataset.value;
+    const idx = state.skill.secondarySkills.indexOf(value);
+    if (idx === -1) { state.skill.secondarySkills.push(value); el.classList.add('selected'); }
+    else { state.skill.secondarySkills.splice(idx, 1); el.classList.remove('selected'); }
+  }
+
+  const MOCK_SCHEMES = [
+    { id: 'ayushman', icon: I.hospital, name: 'आयुष्मान भारत', desc: '5 लाख रुपये तक मुफ्त इलाज, पूरे परिवार के लिए', tag: 'पात्र' },
+    { id: 'shramyogi', icon: I.worker, name: 'PM श्रम योगी मानधन', desc: '60 वर्ष के बाद ₹3,000 मासिक पेंशन', tag: 'पात्र' },
+    { id: 'eshram', icon: I.idcard, name: 'e-Shram कार्ड', desc: 'असंगठित क्षेत्र के श्रमिकों का राष्ट्रीय पंजीकरण', tag: 'सुझाया गया' },
+  ];
+
+  const MOCK_JOBS = [
+    { id: 'job1', title: 'घरेलू सहायिका चाहिए', salary: '₹12,000/माह', distance: '1.2 किमी', rating: '4.5', type: 'पूर्णकालिक' },
+    { id: 'job2', title: 'सोसाइटी गार्ड चाहिए', salary: '₹15,000/माह', distance: '2.8 किमी', rating: '4.2', type: 'पूर्णकालिक' },
+  ];
+
+  function renderSchemesList() {
+    const container = document.getElementById('schemes-list-container');
+    if (MOCK_SCHEMES.length === 0) {
+      container.innerHTML = emptyState('कोई योजना उपलब्ध नहीं', 'प्रोफ़ाइल पूरी करें ताकि हम आपके लिए योजनाएं खोज सकें', I.inbox);
+      return;
+    }
+    container.innerHTML = MOCK_SCHEMES.map(s =>
+      '<div class="list-row" onclick="openSchemeDetail(\'' + s.id + '\')">' +
+        '<div class="list-row-icon">' + svgIcon(s.icon, 22, 'var(--marigold-deep)') + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="list-row-title">' + s.name + '</div>' +
+          '<div class="list-row-meta">' + s.desc + '</div>' +
+          '<div class="list-row-chips"><span class="chip verified">' + s.tag + '</span></div>' +
+        '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  function openSchemeDetail(schemeId) {
+    const scheme = MOCK_SCHEMES.find(s => s.id === schemeId);
+    document.getElementById('scheme-detail-content').innerHTML =
+      '<div class="list-row-icon" style="width:56px;height:56px;">' + svgIcon(scheme.icon, 28, 'var(--marigold-deep)') + '</div>' +
+      '<div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-top:12px;">' + scheme.name + '</div>' +
+      '<div style="color:var(--ink-soft);margin-top:8px;line-height:1.5;">' + scheme.desc + '</div>';
+    showScreen('screen-scheme-detail');
+  }
+
+  function renderJobsList() {
+    const container = document.getElementById('jobs-list-container');
+    if (MOCK_JOBS.length === 0) {
+      container.innerHTML = emptyState('अभी कोई नौकरी नहीं', 'नई नौकरियां आते ही आपको यहां और सूचना में दिखेंगी', I.briefcase);
+      return;
+    }
+    container.innerHTML = MOCK_JOBS.map(j =>
+      '<div class="list-row" onclick="openJobDetail(\'' + j.id + '\')">' +
+        '<div class="list-row-icon">' + svgIcon(I.briefcase, 22, 'var(--marigold-deep)') + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="list-row-title">' + j.title + '</div>' +
+          '<div class="list-row-meta">' + j.salary + ' &middot; ' + j.distance + '</div>' +
+          '<div class="list-row-chips">' +
+            '<span class="chip">' + svgIcon(I.star, 12, 'var(--marigold)') + ' ' + j.rating + '</span>' +
+            '<span class="chip">' + j.type + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  function openJobDetail(jobId) {
+    const job = MOCK_JOBS.find(j => j.id === jobId);
+    document.getElementById('job-detail-content').innerHTML =
+      '<div style="font-family:var(--font-display);font-size:19px;font-weight:700;">' + job.title + '</div>' +
+      '<div style="color:var(--ink-soft);margin-top:8px;">' + job.salary + ' &middot; ' + job.distance + '</div>' +
+      '<div class="list-row-chips" style="margin-top:10px;">' +
+        '<span class="chip">' + svgIcon(I.star, 12, 'var(--marigold)') + ' नियोक्ता रेटिंग ' + job.rating + '</span>' +
+        '<span class="chip">' + job.type + '</span>' +
+      '</div>';
+    showScreen('screen-job-detail');
+  }
+
+  function emptyState(title, sub, iconPath) {
+    return '<div class="empty-state"><div class="tile-icon" style="margin:0 auto 10px;background:var(--sand);color:var(--ink-faint);">' +
+      svgIcon(iconPath, 22) + '</div><div class="empty-state-title">' + title + '</div><div class="empty-state-sub">' + sub + '</div></div>';
+  }
+
+  function passbookHtml() {
+    const name = state.personal.name || 'आपका नाम';
+    const role = state.skill.occupationLabel || 'काम अभी चुना नहीं गया';
+    const stamps = [
+      { key: 'aadhaar', label: 'आधार', done: !!state.personal.aadhaarDocUploaded || !!state.personal.aadhaar, icon: I.idcard },
+      { key: 'police', label: 'पुलिस', done: state.policeVerification.status === 'verified', icon: I.shield },
+      { key: 'skill', label: 'कौशल', done: !!state.skill.occupation, icon: I.briefcase },
+    ];
+    const pct = state.profileCompletion;
+    return '<div class="passbook"><div class="passbook-inner">' +
+      '<div class="passbook-row">' +
+        '<div class="passbook-avatar">' + svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>', 26, '#fff') + '</div>' +
+        '<div><div class="passbook-name">' + name + '</div><div class="passbook-role">' + role + '</div></div>' +
+      '</div>' +
+      '<div class="passbook-stamps">' +
+        stamps.map(s => '<div class="stamp ' + (s.done ? 'done' : '') + '" title="' + s.label + '">' + svgIcon(s.icon, 18) + '</div>').join('') +
+      '</div>' +
+      '<div class="passbook-progress">' +
+        '<div class="passbook-progress-track"><div class="passbook-progress-fill" style="width:' + pct + '%;"></div></div>' +
+        '<div class="passbook-progress-label">पासबुक ' + pct + '% पूरी — बेहतर मौकों के लिए पूरा करें</div>' +
+      '</div>' +
+    '</div></div>';
+  }
+
+  function renderHome() {
+    document.getElementById('home-passbook').innerHTML = passbookHtml();
+    document.getElementById('home-name-line').textContent = state.personal.name ? state.personal.name + ' जी, आपकी पासबुक तैयार है' : 'अपनी प्रगति देखें';
+  }
+
+  function renderProfile() {
+    document.getElementById('profile-passbook').innerHTML = passbookHtml();
+  }
+
+  function renderDocumentLocker() {
+    const docs = [
+      { icon: I.idcard, name: 'आधार कार्ड', uploaded: !!state.personal.aadhaarDocUploaded },
+      { icon: I.idcard, name: 'पैन कार्ड', uploaded: !!state.personal.panDocUploaded },
+      { icon: I.shield, name: 'पुलिस सत्यापन', uploaded: state.policeVerification.status === 'verified' },
+    ];
+    document.getElementById('doc-locker-list').innerHTML = docs.map(d =>
+      '<div class="list-row" style="cursor:default;align-items:center;">' +
+        '<div class="list-row-icon" style="background:' + (d.uploaded ? 'var(--ink-teal-tint)' : 'var(--sand)') + ';color:' + (d.uploaded ? 'var(--ink-teal)' : 'var(--ink-faint)') + ';">' + svgIcon(d.icon, 20) + '</div>' +
+        '<div style="flex:1;font-weight:600;">' + d.name + '</div>' +
+        '<span class="chip ' + (d.uploaded ? 'verified' : 'pending') + '">' + (d.uploaded ? svgIcon(I.check, 12) + ' अपलोड हुआ' : svgIcon(I.clock, 12) + ' लंबित') + '</span>' +
+      '</div>'
+    ).join('');
+  }
+
+  function renderWorkHistory() {
+    const list = document.getElementById('work-history-list');
+    if (state.workHistory.length === 0) {
+      list.innerHTML = emptyState('अभी कोई कार्य अनुभव नहीं', 'अपना पहला कार्य अनुभव जोड़ें ताकि नियोक्ता आप पर भरोसा कर सकें', I.briefcase);
+      return;
+    }
+    list.innerHTML = state.workHistory.map(w =>
+      '<div class="card" style="margin-bottom:12px;"><div style="font-family:var(--font-display);font-weight:600;">' + w.role + ' — ' + w.employer + '</div>' +
+      '<div style="color:var(--ink-soft);font-size:13px;margin-top:3px;">' + w.duration + '</div></div>'
+    ).join('');
+  }
+
+  function renderSkillsPassport() {
+    const stars = [1,2,3,4].map(() => svgIcon(I.star, 16, 'var(--marigold)')).join('');
+    document.getElementById('skills-passport-content').innerHTML =
+      '<div class="card">' +
+        '<div style="display:flex;justify-content:space-between;"><span style="color:var(--ink-soft);">प्राथमिक कौशल</span><b>' + (state.skill.occupationLabel || '—') + '</b></div>' +
+        '<div style="display:flex;justify-content:space-between;margin-top:10px;"><span style="color:var(--ink-soft);">अनुभव</span><b>' + (state.skill.experience || '—') + '</b></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;"><span style="color:var(--ink-soft);">कौशल स्कोर</span><span>' + stars + '</span></div>' +
+      '</div>';
+  }
+
+  function renderIncomeTracker() {
+    const total = state.incomeEntries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    document.getElementById('income-total').textContent = 'कुल आय: ₹' + total.toLocaleString('en-IN');
+    const list = document.getElementById('income-list');
+    if (state.incomeEntries.length === 0) {
+      list.innerHTML = emptyState('अभी कोई आय दर्ज नहीं', 'अपनी पहली आय जोड़ें ताकि आप अपनी कमाई का हिसाब रख सकें', I.inbox);
+      return;
+    }
+    list.innerHTML = state.incomeEntries.map(e =>
+      '<div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">' +
+      '<span style="color:var(--ink-soft);">' + e.date + ' &middot; ' + (e.mode === 'upi' ? 'UPI' : 'नकद') + '</span><b>₹' + Number(e.amount).toLocaleString('en-IN') + '</b></div>'
+    ).join('');
+  }
+
+  function openBottomSheet(html) {
+    document.getElementById('bottom-sheet').innerHTML = '<div class="sheet-handle"></div>' + html;
+    document.getElementById('bottom-sheet').style.display = 'block';
+    document.getElementById('bottom-sheet-overlay').style.display = 'block';
+  }
+  function closeBottomSheet() {
+    document.getElementById('bottom-sheet').style.display = 'none';
+    document.getElementById('bottom-sheet-overlay').style.display = 'none';
+  }
+
+  function openAddIncomeSheet() {
+    openBottomSheet(
+      '<div class="sheet-title">आय जोड़ें</div>' +
+      '<div class="field-group">' +
+      '<span class="field-label">राशि</span>' +
+      '<input id="sheet-income-amount" type="number" placeholder="₹ राशि दर्ज करें" class="input-field" inputmode="numeric" />' +
+      '<span class="field-label">भुगतान का तरीका</span>' +
+      '<div class="select-wrap"><select id="sheet-income-mode" class="input-field"><option value="cash">नकद</option><option value="upi">UPI</option></select></div>' +
+      '</div>' +
+      '<button class="btn-primary" style="margin-top:18px;" onclick="saveIncomeEntry()">जोड़ें</button>'
+    );
+  }
+  function saveIncomeEntry() {
+    const amount = document.getElementById('sheet-income-amount').value;
+    const mode = document.getElementById('sheet-income-mode').value;
+    if (!amount) return;
+    state.incomeEntries.unshift({ date: new Date().toLocaleDateString('hi-IN'), amount, mode });
+    closeBottomSheet();
+    renderIncomeTracker();
+    showToast('आय जोड़ी गई');
+  }
+
+  function openAddWorkHistorySheet() {
+    openBottomSheet(
+      '<div class="sheet-title">कार्य अनुभव जोड़ें</div>' +
+      '<div class="field-group">' +
+      '<input id="sheet-wh-employer" placeholder="नियोक्ता का नाम" class="input-field" />' +
+      '<input id="sheet-wh-role" placeholder="भूमिका (जैसे घरेलू सहायिका)" class="input-field" />' +
+      '<input id="sheet-wh-duration" placeholder="अवधि (जैसे 2020–2022)" class="input-field" />' +
+      '</div>' +
+      '<button class="btn-primary" style="margin-top:18px;" onclick="saveWorkHistoryEntry()">जोड़ें</button>'
+    );
+  }
+  function saveWorkHistoryEntry() {
+    const employer = document.getElementById('sheet-wh-employer').value.trim();
+    const role = document.getElementById('sheet-wh-role').value.trim();
+    const duration = document.getElementById('sheet-wh-duration').value.trim();
+    if (!employer || !role) return;
+    state.workHistory.unshift({ employer, role, duration });
+    closeBottomSheet();
+    renderWorkHistory();
+    showToast('कार्य अनुभव जोड़ा गया');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => showScreen('screen-carousel'), 1200);
+  });
+</script>
+</body>
+</html>
